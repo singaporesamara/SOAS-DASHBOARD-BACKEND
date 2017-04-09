@@ -4,6 +4,7 @@ use Profiles;
 use Result;
 use Users;
 use Request;
+use BankAccounts;
 
 class ProfileController extends Controller
 {
@@ -13,7 +14,6 @@ class ProfileController extends Controller
 	    
 	    if (!$user->error) {
 		    $profile = new Profiles;
-		    
 			$profile->UserID = $user->id;
 			$profile->CoName = Request::input('CoName');
 			$profile->CoUEN = Request::input('CoUEN');
@@ -28,6 +28,14 @@ class ProfileController extends Controller
 			$profile->ForeignAddress1 = Request::input('ForeignAddress1');
 			$profile->ForeignAddress2 = Request::input('ForeignAddress2');
 			$profile->save();
+			
+			$account = new BankAccounts;
+			$account->UserID = $user->id;
+			$account->BankName = Request::input('BankName');
+			$account->BranchName = Request::input('BranchName');
+			$account->AccountNumber = Request::input('AccountNumber');
+			$account->AccountHolderName = Request::input('AccountHolderName');
+			$account->save();
 			
 			return Result::build()
 					->setError(false)

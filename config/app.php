@@ -207,6 +207,7 @@ return [
         'Result' => App\Libraries\Result::class,
         'Users' => App\Libraries\Users::class,
         'Profiles' => App\Libraries\Profiles::class,
+        'BankAccounts' => App\Libraries\BankAccounts::class,
 
     ],
 

@@ -100,6 +100,7 @@ class Users extends Model
     {
 	    $this->checkword = '';
 	    $this->Password = md5($password);
+	    $this->token = md5(rand(100000, 999999));
 	    $this->save();
     }
     
