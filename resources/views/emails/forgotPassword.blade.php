@@ -1,0 +1,1 @@
+<a href="{{ env('SITE_URL') }}/change-password?checkword={{ $checkword }}">Link to set new password</a>
