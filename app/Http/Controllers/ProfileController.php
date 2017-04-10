@@ -5,6 +5,7 @@ use Result;
 use Users;
 use Request;
 use BankAccounts;
+use GuzzleHttp\Client;
 
 class ProfileController extends Controller
 {
@@ -13,6 +14,12 @@ class ProfileController extends Controller
 	    $user = Users::getByToken(Request::header('Authorization'));
 	    
 	    if (!$user->error) {
+		    $client = new \GuzzleHttp\Client(['base_uri' => env('WALLET_URL')]);
+		    $response = $client->request('POST', '/wallet/create');
+		    
+		    $user->WalletToken = $response->getBody();
+		    $user->save();
+		    
 		    $profile = new Profiles;
 			$profile->UserID = $user->id;
 			$profile->CoName = Request::input('CoName');
@@ -26,7 +33,7 @@ class ProfileController extends Controller
 			$profile->AuthorisedOfficer = Request::input('AuthorisedOfficer');
 			$profile->ClientMobile = Request::input('ClientMobile');
 			$profile->ForeignAddress1 = Request::input('ForeignAddress1');
-			$profile->ForeignAddress2 = Request::input('ForeignAddress2');
+			$profile->ForeignAddress2 = Request::input('ForeignAddress2');			
 			$profile->save();
 			
 			$account = new BankAccounts;
@@ -35,7 +42,7 @@ class ProfileController extends Controller
 			$account->BranchName = Request::input('BranchName');
 			$account->AccountNumber = Request::input('AccountNumber');
 			$account->AccountHolderName = Request::input('AccountHolderName');
-			$account->save();
+			$account->save();			
 			
 			return Result::build()
 					->setError(false)

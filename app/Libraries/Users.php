@@ -29,7 +29,9 @@ class Users extends Model
     {
         $this->error = false;
         $this->message = '';
-        $this->profile = [];
+        $this->profile = [
+	        'Registered'	=> false
+        ];
     }
     
     public function add($email, $password)
