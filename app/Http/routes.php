@@ -22,5 +22,10 @@ Route::post('/auth/sign-in/',				'AuthController@signin');
 Route::post('/auth/forgot/',				'AuthController@forgot');
 Route::post('/auth/set-password/',			'AuthController@setPassword');
 
-Route::post('/profile/',					'ProfileController@profile');	
+Route::post('/profile/',					'ProfileController@profile');
+Route::get(	'/profile/news/',				'ProfileController@news');	
 Route::post('/profile/registration-form/',	'ProfileController@registrationForm');
+Route::post('/profile/check/',				'ProfileController@check');
+
+Route::post('/transaction/create/',			'TransactionsController@create');
+Route::post('/transaction/topup/',			'TransactionsController@topup');

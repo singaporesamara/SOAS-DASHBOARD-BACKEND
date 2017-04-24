@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Model as Model;
 
 use Mail;
+use Profiles;
 
 class Users extends Model
 {
@@ -24,6 +25,8 @@ class Users extends Model
     
     const TOKEN_MUST_FILL = 'Token should not be empty';
     const TOKEN_NOT_FOUND = 'User with this token not found';
+    
+    const USER_NOT_FOUND = 'User with this string not found';
     
     public function __construct()
     {
@@ -147,4 +150,61 @@ class Users extends Model
 	    				
 	    return $this;
     }
+    
+    public function getBalance()
+    {
+	    $client = new \GuzzleHttp\Client(['base_uri' => env('WALLET_URL')]);
+		$response = $client->request('GET', '/wallet/'.$this->WalletToken);
+		$res = json_decode($response->getBody());
+		
+		if (isset($res->balance)) {
+			$balance = [
+				'account'	=> $res->balance,
+				'eWallet'	=> $res->balance
+			];
+		} else {
+			$balance = [];
+		}
+
+		return $balance;
+    }
+    
+    public function getNews()
+    {
+	    $client = new \GuzzleHttp\Client(['base_uri' => env('WALLET_URL')]);
+		$response = $client->request('GET', '/wallet/news/'.$this->WalletToken);
+		$news = json_decode($response->getBody());
+		
+		foreach($news as $k => $n) {
+			$u = static::where([
+					'users.WalletToken'	=> $n->title
+				])->leftJoin('profiles', 'profiles.UserID', '=', 'users.id')
+				->select(
+					'profiles.CoName as CoName'
+				)->first();
+				
+			if ($u) {
+				$news[$k]->title = $u['CoName'].' eWallet';
+			}
+		}
+	    
+	    return $news;
+	}
+	
+	public static function getByEmailOrUEN($string)
+	{
+		$res = static::where('users.Email', 'like', '%'.$string.'%')->first();
+		    		
+		if (!$res) {
+			    
+			$res = Profiles::where('profiles.CoUEN', 'like', '%'.$string.'%')
+			    	->leftJoin('users', 'users.id', '=', 'profiles.UserID')
+					->select(
+						'users.token as token'
+					)->first();
+					
+		}
+		
+		return $res;
+	}
 }
